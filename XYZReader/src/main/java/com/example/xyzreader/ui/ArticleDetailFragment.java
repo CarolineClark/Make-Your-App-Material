@@ -26,8 +26,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
@@ -66,6 +69,7 @@ public class ArticleDetailFragment extends Fragment implements
     private SimpleDateFormat outputFormat = new SimpleDateFormat();
     // Most time functions can only handle 1902 - 2037
     private GregorianCalendar START_OF_EPOCH = new GregorianCalendar(2,1,1);
+    private ImageButton mFabButton;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -140,7 +144,8 @@ public class ArticleDetailFragment extends Fragment implements
 
         mStatusBarColorDrawable = new ColorDrawable(0);
 
-        mRootView.findViewById(R.id.share_fab).setOnClickListener(new View.OnClickListener() {
+        mFabButton = (ImageButton) mRootView.findViewById(R.id.share_fab);
+        mFabButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(Intent.createChooser(ShareCompat.IntentBuilder.from(getActivity())
@@ -153,6 +158,10 @@ public class ArticleDetailFragment extends Fragment implements
         bindViews();
         updateStatusBar();
         return mRootView;
+    }
+
+    private void updateFabButton(int accentColor) {
+        mFabButton.setBackgroundColor(accentColor);
     }
 
     private void updateStatusBar() {
@@ -168,6 +177,8 @@ public class ArticleDetailFragment extends Fragment implements
         }
         mStatusBarColorDrawable.setColor(color);
         mDrawInsetsFrameLayout.setInsetBackground(mStatusBarColorDrawable);
+        Window window = this.getActivity().getWindow();
+        window.setStatusBarColor(color);
     }
 
     static float progress(float v, float min, float max) {
@@ -232,6 +243,7 @@ public class ArticleDetailFragment extends Fragment implements
                                 + "</font>"));
 
             }
+//            bodyView.setText("test");
             bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY).replaceAll("(\r\n|\n)", "<br />")));
             ImageLoaderHelper.getInstance(getActivity()).getImageLoader()
                     .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL), new ImageLoader.ImageListener() {
@@ -239,12 +251,35 @@ public class ArticleDetailFragment extends Fragment implements
                         public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
                             Bitmap bitmap = imageContainer.getBitmap();
                             if (bitmap != null) {
-                                Palette p = Palette.generate(bitmap, 12);
+//                                Palette p = Palette.generate(bitmap, 12);
+                                Palette p = Palette.from(bitmap).maximumColorCount(12).generate();
                                 mMutedColor = p.getDarkMutedColor(0xFF333333);
+                                int defaultColor = 0xFFFF0000;
+                                int accentColor;
+                                accentColor = p.getVibrantColor(defaultColor);
+                                if (accentColor == defaultColor) {
+                                    accentColor = p.getDarkVibrantColor(defaultColor);
+                                }
+                                if (accentColor == defaultColor) {
+                                    accentColor = p.getLightVibrantColor(defaultColor);
+                                }
+                                if (accentColor == defaultColor) {
+                                    accentColor = p.getDominantColor(defaultColor);
+                                }
+                                if (accentColor == defaultColor) {
+                                    accentColor = p.getMutedColor(defaultColor);
+                                }
+                                if (accentColor == defaultColor) {
+                                    accentColor = p.getDarkMutedColor(defaultColor);
+                                }
+                                if (accentColor == defaultColor) {
+                                    accentColor = p.getLightMutedColor(defaultColor);
+                                }
                                 mPhotoView.setImageBitmap(imageContainer.getBitmap());
                                 mRootView.findViewById(R.id.meta_bar)
                                         .setBackgroundColor(mMutedColor);
                                 updateStatusBar();
+                                updateFabButton(accentColor);
                             }
                         }
 
@@ -254,10 +289,11 @@ public class ArticleDetailFragment extends Fragment implements
                         }
                     });
         } else {
-            mRootView.setVisibility(View.GONE);
-            titleView.setText("N/A");
-            bylineView.setText("N/A" );
-            bodyView.setText("N/A");
+            Toast.makeText(getContext(), "ERROR", Toast.LENGTH_SHORT).show();
+//            mRootView.setVisibility(View.GONE);
+//            titleView.setText("N/A");
+//            bylineView.setText("N/A" );
+//            bodyView.setText("N/A");
         }
     }
 
