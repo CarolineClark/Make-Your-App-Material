@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -161,7 +162,7 @@ public class ArticleDetailFragment extends Fragment implements
     }
 
     private void updateFabButton(int accentColor) {
-        mFabButton.setBackgroundColor(accentColor);
+        mFabButton.setBackgroundTintList(ColorStateList.valueOf(accentColor));
     }
 
     private void updateStatusBar() {
