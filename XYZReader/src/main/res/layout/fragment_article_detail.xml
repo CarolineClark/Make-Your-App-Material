@@ -1,5 +1,5 @@
-<com.example.xyzreader.ui.DrawInsetsFrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.example.xyzreader.ui.DrawInsetsFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/draw_insets_frame_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -9,11 +9,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <FrameLayout
+        <android.support.design.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/detail_card_top_margin">
 
-            <FrameLayout
+            <android.support.design.widget.CoordinatorLayout
                 android:id="@+id/photo_container"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/detail_card_top_margin"
@@ -31,7 +31,7 @@
                     android:layout_height="112dp"
                     android:background="@drawable/photo_background_protection" />
 
-            </FrameLayout>
+            </android.support.design.widget.CoordinatorLayout>
 
             <com.example.xyzreader.ui.MaxWidthLinearLayout
                 android:orientation="vertical"
@@ -56,24 +56,44 @@
                     android:paddingBottom="@dimen/detail_metabar_vert_padding"
                     android:layout_marginBottom="@dimen/detail_metabar_vert_padding">
 
-                    <TextView
-                        android:id="@+id/article_title"
-                        style="?android:attr/textAppearanceLarge"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingBottom="@dimen/detail_metabar_title_bottom_padding"
-                        android:fontFamily="sans-serif-condensed"
-                        android:textColor="#fff"
-                        android:textStyle="bold"
-                        android:textSize="@dimen/detail_title_text_size"
-                        android:lineSpacingMultiplier="0.9" />
+                    <!--<android.support.design.widget.AppBarLayout-->
+                        <!--android:id="@+id/up_container"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="500dp"-->
+                        <!--android:background="@android:color/transparent"-->
+                        <!--android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"-->
+                        <!--android:fitsSystemWindows="true">-->
 
-                    <TextView
-                        android:id="@+id/article_byline"
-                        style="?android:attr/textAppearanceSmall"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="#8fff" />
+                        <!--<android.support.design.widget.CollapsingToolbarLayout-->
+                            <!--android:id="@+id/main.collapsing"-->
+                            <!--android:layout_width="match_parent"-->
+                            <!--android:layout_height="match_parent"-->
+                            <!--app:layout_scrollFlags="scroll|exitUntilCollapsed"-->
+                            <!--android:fitsSystemWindows="true"-->
+                            <!--app:contentScrim="?attr/colorPrimary"-->
+                            <!--app:expandedTitleMarginStart="48dp"-->
+                            <!--app:expandedTitleMarginEnd="64dp">-->
+
+                            <TextView
+                                android:id="@+id/article_title"
+                                style="?android:attr/textAppearanceLarge"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:paddingBottom="@dimen/detail_metabar_title_bottom_padding"
+                                android:fontFamily="sans-serif-condensed"
+                                android:textColor="#fff"
+                                android:textStyle="bold"
+                                android:textSize="@dimen/detail_title_text_size"
+                                android:lineSpacingMultiplier="0.9" />
+
+                            <TextView
+                                android:id="@+id/article_byline"
+                                style="?android:attr/textAppearanceSmall"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="#8fff" />
+                        <!--</android.support.design.widget.CollapsingToolbarLayout>-->
+                    <!--</android.support.design.widget.AppBarLayout>-->
                 </LinearLayout>
 
                 <TextView
@@ -90,7 +110,7 @@
                     android:lineSpacingMultiplier="@fraction/detail_body_line_spacing_multiplier" />
 
             </com.example.xyzreader.ui.MaxWidthLinearLayout>
-        </FrameLayout>
+        </android.support.design.widget.CoordinatorLayout>
     </com.example.xyzreader.ui.ObservableScrollView>
 
     <ImageButton android:id="@+id/share_fab"
