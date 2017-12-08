@@ -17,8 +17,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ShareCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.text.Html;
 import android.text.format.DateUtils;
@@ -27,11 +30,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
@@ -87,6 +88,7 @@ public class ArticleDetailFragment extends Fragment implements
         return fragment;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,6 +96,7 @@ public class ArticleDetailFragment extends Fragment implements
         if (getArguments().containsKey(ARG_ITEM_ID)) {
             mItemId = getArguments().getLong(ARG_ITEM_ID);
         }
+//        mItemId = getActivity().getIntent().getLongExtra("itemId", mItemId);
 
         mIsCard = getResources().getBoolean(R.bool.detail_is_card);
         mStatusBarFullOpacityBottom = getResources().getDimensionPixelSize(
@@ -141,6 +144,11 @@ public class ArticleDetailFragment extends Fragment implements
         });
 
         mPhotoView = (ImageView) mRootView.findViewById(R.id.photo);
+//        String transitionName = getActivity().getIntent().getStringExtra("transitionName");
+//        String transitionName = "transition_photo" + mItemId;
+//        mPhotoView.setTransitionName(transitionName);
+        mPhotoView.setTransitionName(getString(R.string.transition_photo) + mItemId);
+
         mPhotoContainerView = mRootView.findViewById(R.id.photo_container);
 
         mStatusBarColorDrawable = new ColorDrawable(0);
@@ -178,8 +186,8 @@ public class ArticleDetailFragment extends Fragment implements
         }
         mStatusBarColorDrawable.setColor(color);
         mDrawInsetsFrameLayout.setInsetBackground(mStatusBarColorDrawable);
-        Window window = this.getActivity().getWindow();
-        window.setStatusBarColor(color);
+//        Window window = this.getActivity().getWindow();
+//        window.setStatusBarColor(color);
     }
 
     static float progress(float v, float min, float max) {
@@ -244,7 +252,6 @@ public class ArticleDetailFragment extends Fragment implements
                                 + "</font>"));
 
             }
-//            bodyView.setText("test");
             bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY).replaceAll("(\r\n|\n)", "<br />")));
             ImageLoaderHelper.getInstance(getActivity()).getImageLoader()
                     .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL), new ImageLoader.ImageListener() {
@@ -252,49 +259,50 @@ public class ArticleDetailFragment extends Fragment implements
                         public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
                             Bitmap bitmap = imageContainer.getBitmap();
                             if (bitmap != null) {
-//                                Palette p = Palette.generate(bitmap, 12);
-                                Palette p = Palette.from(bitmap).maximumColorCount(12).generate();
+                                Palette p = Palette.generate(bitmap, 12);
+//                                Palette p = Palette.from(bitmap).maximumColorCount(12).generate();
                                 mMutedColor = p.getDarkMutedColor(0xFF333333);
-                                int defaultColor = 0xFFFF0000;
-                                int accentColor;
-                                accentColor = p.getVibrantColor(defaultColor);
-                                if (accentColor == defaultColor) {
-                                    accentColor = p.getDarkVibrantColor(defaultColor);
-                                }
-                                if (accentColor == defaultColor) {
-                                    accentColor = p.getLightVibrantColor(defaultColor);
-                                }
-                                if (accentColor == defaultColor) {
-                                    accentColor = p.getDominantColor(defaultColor);
-                                }
-                                if (accentColor == defaultColor) {
-                                    accentColor = p.getMutedColor(defaultColor);
-                                }
-                                if (accentColor == defaultColor) {
-                                    accentColor = p.getDarkMutedColor(defaultColor);
-                                }
-                                if (accentColor == defaultColor) {
-                                    accentColor = p.getLightMutedColor(defaultColor);
-                                }
+//                                int defaultColor = 0xFFFF0000;
+//                                int accentColor;
+//                                accentColor = p.getVibrantColor(defaultColor);
+//                                if (accentColor == defaultColor) {
+//                                    accentColor = p.getDarkVibrantColor(defaultColor);
+//                                }
+//                                if (accentColor == defaultColor) {
+//                                    accentColor = p.getLightVibrantColor(defaultColor);
+//                                }
+//                                if (accentColor == defaultColor) {
+//                                    accentColor = p.getDominantColor(defaultColor);
+//                                }
+//                                if (accentColor == defaultColor) {
+//                                    accentColor = p.getMutedColor(defaultColor);
+//                                }
+//                                if (accentColor == defaultColor) {
+//                                    accentColor = p.getDarkMutedColor(defaultColor);
+//                                }
+//                                if (accentColor == defaultColor) {
+//                                    accentColor = p.getLightMutedColor(defaultColor);
+//                                }
                                 mPhotoView.setImageBitmap(imageContainer.getBitmap());
                                 mRootView.findViewById(R.id.meta_bar)
                                         .setBackgroundColor(mMutedColor);
                                 updateStatusBar();
-                                updateFabButton(accentColor);
+//                                updateFabButton(accentColor);
                             }
+                            startDelayedAnimation();
                         }
 
                         @Override
                         public void onErrorResponse(VolleyError volleyError) {
-
+                            startDelayedAnimation();
                         }
                     });
         } else {
-            Toast.makeText(getContext(), "ERROR", Toast.LENGTH_SHORT).show();
-//            mRootView.setVisibility(View.GONE);
-//            titleView.setText("N/A");
-//            bylineView.setText("N/A" );
-//            bodyView.setText("N/A");
+            startDelayedAnimation();
+            mRootView.setVisibility(View.GONE);
+            titleView.setText("N/A");
+            bylineView.setText("N/A" );
+            bodyView.setText("N/A");
         }
     }
 
@@ -337,5 +345,12 @@ public class ArticleDetailFragment extends Fragment implements
         return mIsCard
                 ? (int) mPhotoContainerView.getTranslationY() + mPhotoView.getHeight() - mScrollY
                 : mPhotoView.getHeight() - mScrollY;
+    }
+
+    private void startDelayedAnimation() {
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        if (activity != null) {
+            activity.supportStartPostponedEnterTransition();
+        }
     }
 }
